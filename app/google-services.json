@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "270437200637",
+    "firebase_url": "https://sign-up-64a09.firebaseio.com",
+    "project_id": "sign-up-64a09",
+    "storage_bucket": "sign-up-64a09.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270437200637:android:d64cfb7891deb7c747c494",
+        "android_client_info": {
+          "package_name": "com.example.rahulrajbaranwal.signup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "270437200637-rgejdvj5uha2c2govgbvr4uias2rpcjg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlOrHWcZfd90WYi-bsSKLw4o4r0YI9X6s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "270437200637-rgejdvj5uha2c2govgbvr4uias2rpcjg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

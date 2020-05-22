@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+
+    tools:context=".Welcome">
+
+    <com.example.rahulrajbaranwal.signup.AutoScrollViewPager
+        android:id="@+id/slidevierpager"
+        android:layout_width="match_parent"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_height="395dp"
+        android:background="#f7f7f7"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/head_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView6"
+        android:layout_alignStart="@+id/textView6"
+        android:text="Welcome"
+        android:textColor="#000000"
+        android:fontFamily="Montserrat"
+        android:textStyle="bold"
+        android:textSize="19sp"
+        />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="336dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="42dp"
+        android:layout_marginEnd="33dp"
+        android:layout_marginBottom="140dp"
+        android:scrollbarSize="10dp"
+        android:textColor="#000000"
+        android:fontFamily="Open sans"
+        android:text="With our app you can access your meetings or connect with anybody on the globe that too on the go, be it any device on any platform."
+        android:textSize="13sp" />
+
+    <Button
+        android:id="@+id/started"
+        android:layout_width="130dp"
+        android:layout_height="40dp"
+        android:layout_alignTop="@+id/textView6"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:backgroundTint="#7788C3"
+        android:background="@drawable/button_background"
+        android:text="GET-STARTED"
+
+        android:textColor="#ffffff" />
+
+    <LinearLayout
+        android:id="@+id/dotsLayout"
+        android:layout_width="104dp"
+
+        android:layout_height="51dp"
+        android:layout_marginLeft="158dp"
+        android:layout_marginTop="385dp"
+        android:orientation="horizontal"></LinearLayout>
+
+
+</RelativeLayout>

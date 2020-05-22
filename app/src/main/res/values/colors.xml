@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3348be</color>
+    <color name="colorPrimaryDark">#3348be</color>
+    <color name="colorAccent">#091c26</color>
+    <color name="colorTransparentWhite">#CCCCCC</color>
+    <color name="colorWhite">#A9A9A9</color>
+    <color name="holo_dark_blue">#ff0099cc</color>
+    <color name="holo_purple">#7788C3</color>
+    <color name="holo_gray">#f7f7f7</color>
+    <color name="holo_new_gray">#d7d7d5</color>
+    <color name="black">#000000</color>
+    <!-- Switch Colors-->
+    <color name="disable_forground_gray">#000000</color>
+    <color name="disable_thumb_grey">#000000</color>
+    <color name="enable_thumb_blue">#7289DA</color>
+</resources>
