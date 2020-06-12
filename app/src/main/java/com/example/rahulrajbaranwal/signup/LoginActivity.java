@@ -5,8 +5,11 @@ package com.example.rahulrajbaranwal.signup;
  */
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
@@ -20,6 +23,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,8 +58,10 @@ import org.json.JSONObject;
 public class LoginActivity extends AppCompatActivity {
     public EditText InputEmail, InputPassword;
     public  TextView InputForgot, InputRegister;
+    private ProgressDialog mProgress;
     ImageButton back;
     String email=" ";
+    SharedPreferences sharedPreferences;
 
     private RequestQueue requestQueue;
     String KEY_USERNAME="username";
@@ -65,6 +71,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private String username;
     String password=" ";
+    String token1;
+    public static final String MyPREFERENCES = "MyPrefs" ;
 
 
 
@@ -73,8 +81,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-
-
+        mProgress = new ProgressDialog(LoginActivity.this);
+        mProgress.setTitle("Signing in...");
+        mProgress.setMessage("Please wait...");
+       mProgress.setCancelable(false);
+       mProgress.setIndeterminate(true);
         getSupportActionBar().setTitle("Sign In");
 
 
@@ -84,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
         InputLogin = findViewById(R.id.signin);
         InputForgot = findViewById(R.id.forgot);
         InputRegister= findViewById(R.id.register);
+        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         back= findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +114,14 @@ public class LoginActivity extends AppCompatActivity {
         InputRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(LoginActivity.this, naviagation_menu.class);
+//                SharedPreferences manageProfile=getSharedPreferences("Data",MODE_PRIVATE);
+//                SharedPreferences.Editor edit=manageProfile.edit();
+//                edit.putString("token","Rahul");
+//                edit.putString("user",email);
+//                edit.putString("password",password);
+//                edit.commit();
+
+                Intent i = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(i);
             }
         });
@@ -111,6 +130,9 @@ public class LoginActivity extends AppCompatActivity {
 
         InputLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
+
+
 
 
                 email = Objects.requireNonNull(InputEmail).getText().toString().trim();
@@ -125,12 +147,21 @@ public class LoginActivity extends AppCompatActivity {
 
                         }
                     }
+                    mProgress.show();
                     String data = "{" +
                             "\"username\""+":" + "\"" + email + "\","+
                             "\"password\"" +":"+ "\""+ password+ "\""+
 
                             "}";
                     userLogin(data);
+
+                    SharedPreferences manageProfile=getSharedPreferences("Data",MODE_PRIVATE);
+                    SharedPreferences.Editor edit=manageProfile.edit();
+                    edit.putString("token","Nilesh");
+                    edit.putString("user",email);
+                    edit.putString("password",password);
+                    edit.commit();
+
 
 
                 } else {
@@ -142,12 +173,22 @@ public class LoginActivity extends AppCompatActivity {
 
     }
     private void userLogin(String data){
+
         final String savedata = data;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("username", email);
         params.put("password", password);
+
+        SharedPreferences.Editor editor= sharedPreferences.edit();
+        editor.putString(username, username);
+        editor.putString(password, password);
+        editor.commit();
+
+
+
+
         JSONObject jsonObject=new JSONObject(params);
-        String Login_URL ="http://Ummodi-env.eba-tt5qhrb5.us-east-1.elasticbeanstalk.com:8080/authenticate";
+        String Login_URL ="http://umbeolaunchloadbal-167166363.us-east-2.elb.amazonaws.com/authenticate";
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 Login_URL, jsonObject,
 
@@ -158,12 +199,31 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(JSONObject response) {
+                        mProgress.dismiss();
                         try {
                             if(response.getString("token").trim().length()>0){
+                                token1 = response.getString("token").trim();
+//                                Intent j = new Intent(LoginActivity.this, ManageProfile.class);
+//                                j.putExtra("password",password);
+//                                j.putExtra("username",email);
+//                                j.putExtra("token", token1 );
+//                                startActivity(j);
+
+                                SharedPreferences manageProfile=getSharedPreferences("Data",MODE_PRIVATE);
+                                SharedPreferences.Editor edit=manageProfile.edit();
+                                edit.putString("token",token1);
+                                edit.putString("user",email);
+                                edit.putString("password",password);
+                                edit.commit();
+
                                 startActivity(new Intent(getApplicationContext(),naviagation_menu.class));
+
                             }
+
                         } catch (JSONException e) {
+                            mProgress.dismiss();
                             e.printStackTrace();
+
                         }
 
 
@@ -176,6 +236,7 @@ public class LoginActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        mProgress.dismiss();
                         Toast.makeText(getApplicationContext(), error.getClass().getSimpleName(), Toast.LENGTH_SHORT).show();
 
                     }});

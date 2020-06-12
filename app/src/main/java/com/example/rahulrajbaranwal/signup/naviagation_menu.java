@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -27,9 +28,14 @@ public class naviagation_menu extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     ConstraintLayout layout;
+    ImageButton cross;
+    ImageView title,userIMage,dot;
+    TextView channgeTitle;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_naviagation_menu);
@@ -37,10 +43,21 @@ public class naviagation_menu extends AppCompatActivity
 
         setSupportActionBar(toolbar);
         layout=findViewById(R.id.fragmentContainer);
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.schedule_action);
+        title=findViewById(R.id.veube_icon);
+        userIMage=findViewById(R.id.profile_picture);
+        dot=findViewById(R.id.dot);
+        channgeTitle=findViewById(R.id.titleChange);
+        //        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+//        getSupportActionBar().setCustomView(R.layout.schedule_action);
 
-
+        cross = findViewById(R.id.cross);
+        cross.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), naviagation_menu.class);
+                startActivity(i);
+            }
+        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -107,12 +124,35 @@ public class naviagation_menu extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,new ManageProfile()).commit();
+        //   getSupportActionBar().setTitle("Manage Profile");
+            userIMage.setVisibility(View.GONE);
+            dot.setVisibility(View.GONE);
+            title.setVisibility(View.GONE);
+            channgeTitle.setVisibility(View.VISIBLE);
+            channgeTitle.setText("Manage Profile");
+
         } else if (id == R.id.nav_gallery) {
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,new ContactUs()).commit();
+            userIMage.setVisibility(View.GONE);
+            dot.setVisibility(View.GONE);
+            title.setVisibility(View.GONE);
+            channgeTitle.setVisibility(View.VISIBLE);
+            channgeTitle.setText("Contact Us");
         } else if (id == R.id.nav_slideshow) {
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,new Terms_Conditions()).commit();
+            userIMage.setVisibility(View.GONE);
+            dot.setVisibility(View.GONE);
+            title.setVisibility(View.GONE);
+            channgeTitle.setVisibility(View.VISIBLE);
+            channgeTitle.setText("Terms & Conditions");
         } else if (id == R.id.nav_manage) {
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer,new About_Us()).commit();
+            userIMage.setVisibility(View.GONE);
+            dot.setVisibility(View.GONE);
+            title.setVisibility(View.GONE);
+            channgeTitle.setVisibility(View.VISIBLE);
+            channgeTitle.setText("About Us");
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {

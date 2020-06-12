@@ -3,6 +3,7 @@ package com.example.rahulrajbaranwal.signup;
 import android.*;
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -16,13 +17,16 @@ import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -34,9 +38,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -49,6 +55,7 @@ import com.google.firebase.auth.AuthResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -57,26 +64,27 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import id.zelory.compressor.Compressor;
+
 public class MainActivity extends AppCompatActivity {
     public EditText InputEmail, InputName, InputPassword;
     ImageButton upload;
-    String imagePath;
-    ImageView imageView;
+    private ProgressDialog mProgress;
     private RequestQueue requestQueue;
     public Button InputtSignup, InputLogin;
     private TextView mDisplaydate, displaylogin;
-    FirebaseAuth mFirebaseAuth;
-    private String username;
     ImageButton back;
     private static int RESULT_LOAD_IMAGE = 1;
-    private  String useremail;
-    private String userdob;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     String name = " ";
     String password= " ";
     String email=" ";
     String dob=" ";
+    Bitmap lastBitmap= null ;
+
+    String image=" ";
 
 
 
@@ -85,6 +93,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mProgress = new ProgressDialog(this);
+        mProgress.setTitle("Signing Up...");
+        mProgress.setMessage("Please wait...");
+        mProgress.setCancelable(false);
+        mProgress.setIndeterminate(true);
+
 
 
 
@@ -102,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+        if(ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED &&(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED) ){
             ActivityCompat.requestPermissions(MainActivity.this,new String[]{
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
             },1);
 
         }
@@ -182,13 +196,21 @@ public class MainActivity extends AppCompatActivity {
         InputtSignup.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                 name = Objects.requireNonNull(InputName).getText().toString().trim();
+                name = Objects.requireNonNull(InputName).getText().toString().trim();
                 email = Objects.requireNonNull(InputEmail).getText().toString().trim();
                 password = Objects.requireNonNull(InputPassword).getText().toString();
                 dob = Objects.requireNonNull(mDisplaydate).getText().toString();
-                Random random = new Random();
-                int otp = random.nextInt(9999999-999999)+999999;
+//                Random random = new Random();
+//                int otp = random.nextInt(9999999-999999)+999999;
+                if(lastBitmap==null) {
+                image="image";
 
+                }
+                else {
+                    image = getStringImage(lastBitmap);
+                    Log.d("image", image);
+
+                }
 
                 if (!name.isEmpty() && !email.isEmpty() && !dob.isEmpty() && !password.isEmpty()) {
                     if (email.isEmpty())
@@ -203,16 +225,17 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Invalid email address", Toast.LENGTH_SHORT).show();
                         }
                     }
-
+                    //"\"profile\"" +":"+ "\""+ image+ "\""+
                     {
+                        mProgress.show();
                         String data = "{" +
                                 "\"name\""+":" + "\"" + name + "\","+
-                                "\"otp\""+":" + "\"" + otp + "\","+
                                 "\"username\""+":" + "\"" + email + "\","+
                                 "\"password\"" +":"+ "\""+ password+ "\""+
-
                                 "}";
-                        Submit(data);
+                    // new pushAynce().execute(new UserData(email,name,password,dob,image));
+
+                       Submit(data);
 
 
 
@@ -264,22 +287,28 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-            ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        CircleImageView imageView =  findViewById(R.id.imageView);
 
 
             //Converting uploaded image into circular shape
 
             Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-            Bitmap circleBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+//            Bitmap circleBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+//
+//            BitmapShader shader = new BitmapShader (bitmap,  Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+//            Paint paint = new Paint();
+//            paint.setShader(shader);
+//            paint.setAntiAlias(true);
+//            Canvas c = new Canvas(circleBitmap);
+//            c.drawCircle(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth()/2, paint);
 
-            BitmapShader shader = new BitmapShader (bitmap,  Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-            Paint paint = new Paint();
-            paint.setShader(shader);
-            paint.setAntiAlias(true);
-            Canvas c = new Canvas(circleBitmap);
-            c.drawCircle(bitmap.getWidth()/2, bitmap.getHeight()/2, bitmap.getWidth()/2, paint);
+            imageView.setImageBitmap(bitmap);
 
-            imageView.setImageBitmap(circleBitmap);
+            //Converting image into string
+
+            lastBitmap= bitmap;
+           // String image = getStringImage(lastBitmap);
+            //Log.d("image", image);
 
 
 
@@ -287,26 +316,41 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    public String getStringImage(Bitmap bmp){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG,100, baos);
+        byte[] imageBytes= baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
+    }
+
+
     private  void Submit (String data) {
         final String savedata = data;
-        String URL = "http://Ummodi-env.eba-tt5qhrb5.us-east-1.elasticbeanstalk.com:8080/otpgenerated";
+        //String URL = "https://en2nr28lzoz5p.x.pipedream.net/otpgenerated";
+        String URL = "http://umbeolaunchloadbal-167166363.us-east-2.elb.amazonaws.com/otpgenerated";
 
-        requestQueue = Volley.newRequestQueue(getApplicationContext());
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                mProgress.dismiss();
                 Toast.makeText(getApplication(), response, Toast.LENGTH_SHORT).show();
                 if(response.trim().equals("true")){
+
                     Intent i = new Intent(MainActivity.this, OtpGenerated.class);
                     i.putExtra("name",name);
                     i.putExtra("password",password);
                     i.putExtra("username",email);
+                    i.putExtra("profile",image);
                     startActivity(i);
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mProgress.dismiss();
 
                 Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
 
@@ -326,7 +370,29 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        requestQueue.add(stringRequest);
+        {
+            int socketTimeout=30000;
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            stringRequest.setRetryPolicy(policy);
+            requestQueue = Volley.newRequestQueue(getApplicationContext());
+            requestQueue.add(stringRequest);
+        }
+    }
+    class pushAynce extends AsyncTask<UserData,Void,Void>{
+
+        @Override
+        protected Void doInBackground(UserData... userData) {
+            UserRepo instance=UserRepo.getInstance(getApplicationContext());
+            instance.getDao().insert(userData[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Toast.makeText(MainActivity.this, "Data Stored", Toast.LENGTH_SHORT).show();
+
+        }
     }
 }
 

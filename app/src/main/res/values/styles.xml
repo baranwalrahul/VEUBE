@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="drawerArrowStyle">@style/DrawerIcon</item>
     </style>
+
     <style name="NavigationDrawerStyle">
         <item name="android:textSize">15sp</item>
     </style>
@@ -43,7 +44,6 @@
 
     <style name="DrawerIcon" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="color">#2e2e3a</item>
-
 
 
     </style>

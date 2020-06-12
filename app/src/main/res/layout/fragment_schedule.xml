@@ -31,7 +31,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="100dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.755"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,10 +70,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/editText10"
         android:layout_width="258dp"
         android:layout_height="210dp"
-
+        android:inputType="textMultiLine"
 
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
@@ -114,7 +114,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="580dp"
+        android:layout_marginTop="550dp"
 
         android:background="@drawable/button_more_round"
         android:backgroundTint="#ffffff"

@@ -1,5 +1,6 @@
 package com.example.rahulrajbaranwal.signup;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ import java.util.Random;
 
 public class forgotPassword extends AppCompatActivity {
     private RequestQueue requestQueue;
+    private ProgressDialog mProgress;
     EditText emailForgot;
     TextView loginforgot;
     Button resetOTP;
@@ -35,15 +38,21 @@ public class forgotPassword extends AppCompatActivity {
 
         emailForgot = findViewById(R.id.emailforgot);
         resetOTP = findViewById(R.id.resetOTP);
+        mProgress = new ProgressDialog(this);
+        mProgress.setTitle("Forgot Password...");
+        mProgress.setMessage("Please wait...");
+        mProgress.setCancelable(false);
+        mProgress.setIndeterminate(true);
 
         getSupportActionBar().setTitle("Forgot Password");
 
         resetOTP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mProgress.show();
 
-                Random random = new Random();
-                int password = random.nextInt(999999999-999999)+999999;
+//                Random random = new Random();
+//                int password = random.nextInt(999999999-999999)+999999;
 
 
                 final  String username = emailForgot.getText().toString().trim();
@@ -52,8 +61,8 @@ public class forgotPassword extends AppCompatActivity {
                 }
                 {
                     String data = "{" +
-                            "\"username\"" + ":" + "\"" + username + "\"," +
-                            "\"password\"" + ":" + "\"" + password + "\"" +
+
+                            "\"username\"" + ":" + "\"" + username+ "\"" +
 
                             "}";
                     Submit(data);
@@ -70,7 +79,7 @@ public class forgotPassword extends AppCompatActivity {
 
     private  void Submit (String data) {
         final String savedata = data;
-        String URL = "http://Ummodi-env.eba-tt5qhrb5.us-east-1.elasticbeanstalk.com:8080/forgotPassword";
+        String URL = "http://umbeolaunchloadbal-167166363.us-east-2.elb.amazonaws.com/forgotPassword";
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>()
@@ -78,17 +87,20 @@ public class forgotPassword extends AppCompatActivity {
             @Override
             public void onResponse(String response)
             {
+                mProgress.dismiss();
                 Toast.makeText(getApplication(), response, Toast.LENGTH_SHORT).show();
                 if(response.equals("true")){
+
                     Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(i);
                 }
+
             }
         }, new Response.ErrorListener()
         {
             @Override
             public void onErrorResponse(VolleyError error)
-            {
+            {     mProgress.dismiss();
                 Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+
+    <item
+        android:id="@+id/action_notification1"
+        android:icon="@drawable/dot_icon"
+        android:title="action_notification"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/participants_Id"
+                android:icon="@drawable/participaints_icon"
+                android:orderInCategory="100"
+                android:title="Participants"
+                />
+
+            <item
+                android:id="@+id/share_Id"
+                android:icon="@drawable/sharescreen_icon"
+                android:orderInCategory="100"
+                android:title="Share Screen" />
+
+            <item
+                android:id="@+id/transfer_Id"
+                android:icon="@drawable/transfer_icon"
+                android:orderInCategory="100"
+                android:title="Transfer File" />
+            <item
+                android:id="@+id/raise_Id"
+                android:icon="@drawable/raisehand_icon"
+                android:orderInCategory="100"
+                android:title="Raise Hand" />
+
+
+
+        </menu>
+    </item>
+
+
+</menu>

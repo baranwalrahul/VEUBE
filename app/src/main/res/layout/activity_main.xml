@@ -34,14 +34,17 @@
         android:layout_alignStart="@+id/imageView5"
         android:background="@drawable/backbutton" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView"
         android:layout_width="80dp"
+        android:defaultValue="@null"
         android:layout_height="80dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="95dp"
-        android:background="@drawable/dpuser"
+        android:src="@drawable/dpuser"
+        android:scaleType="centerCrop"
         android:layout_toEndOf="@+id/textView5"
+
 
 
          />
